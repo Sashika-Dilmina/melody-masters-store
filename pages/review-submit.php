@@ -1,4 +1,5 @@
 <?php
+// pages/review-submit.php
 require_once __DIR__ . '/../includes/header.php';
 require_login();
 
@@ -7,7 +8,9 @@ $user_id = get_current_user_id();
 
 $product = fetch_one("SELECT * FROM products WHERE id = ?", "i", [$product_id]);
 if (!$product) {
-    die('Product not found.');
+    set_flash_message('error', 'Product not found.');
+    header('Location: ' . $base_url . '/pages/shop.php');
+    exit;
 }
 
 // Verify if user bought the product
@@ -30,31 +33,39 @@ if ($existing_review) {
 }
 ?>
 
-<h2>Write a Review</h2>
-<div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">
-    <h3 style="margin-bottom: 20px;">Reviewing: <?php echo h($product['name']); ?></h3>
-    <form method="POST" action="<?php echo $base_url; ?>/api/review-save.php">
-        <?php echo csrf_field(); ?>
-        <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+<div style="max-width: 600px; margin: 0 auto; padding-top: 20px;">
+    <div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0;">Submit Review</h2>
+        <a href="product.php?id=<?php echo $product_id; ?>" style="font-size: 0.9rem; color: #64748b;">Return to Product</a>
+    </div>
+
+    <div style="background: #fff; padding: 30px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <p style="margin-bottom: 25px; color: #475569;">You are reviewing: <strong><?php echo h($product['name']); ?></strong></p>
         
-        <div style="margin-bottom: 15px;">
-            <label>Rating (1 to 5)</label><br>
-            <select name="rating" required style="width: 100%; padding: 8px;">
-                <option value="5">5 - Excellent</option>
-                <option value="4">4 - Good</option>
-                <option value="3">3 - Average</option>
-                <option value="2">2 - Poor</option>
-                <option value="1">1 - Terrible</option>
-            </select>
-        </div>
-        
-        <div style="margin-bottom: 15px;">
-            <label>Comment</label><br>
-            <textarea name="comment" required style="width: 100%; padding: 8px; height: 100px;"></textarea>
-        </div>
-        
-        <button type="submit" class="btn" style="width: 100%; background: var(--secondary-color);">Submit Review</button>
-    </form>
+        <form method="POST" action="<?php echo $base_url; ?>/api/review-save.php">
+            <?php echo csrf_field(); ?>
+            <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Rating Quality</label>
+                <select name="rating" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Unsatisfactory</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Written Feedback</label>
+                <textarea name="comment" required placeholder="Describe your experience with this item..."
+                          style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; height: 120px; font-size: 0.9rem; font-family: inherit;"></textarea>
+            </div>
+            
+            <button type="submit" class="btn" style="width: 100%; padding: 12px; border-radius: 6px; font-weight: bold;">Post Review</button>
+        </form>
+    </div>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

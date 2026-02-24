@@ -1,6 +1,13 @@
 <?php
+// pages/checkout.php
 require_once __DIR__ . '/../includes/header.php';
 require_login();
+
+if (get_current_user_role() === 'admin') {
+    set_flash_message('error', 'Administrators are redirected to the dashboard.');
+    header('Location: ' . $base_url . '/admin/dashboard.php');
+    exit;
+}
 
 $cart = $_SESSION['cart'] ?? [];
 if (empty($cart)) {
@@ -18,84 +25,117 @@ $ids = array_map('intval', array_keys($cart));
 if (!empty($ids)) {
     $id_list = implode(',', $ids);
     $products = fetch_all("SELECT * FROM products WHERE id IN ($id_list)");
-    
+
     foreach ($products as $p) {
         $qty = $cart[$p['id']]['quantity'];
-        $subtotal = $p['price'] * $qty;
-        
+        $line_total = $p['price'] * $qty;
+
         if ($p['product_type'] === 'physical') {
-            $physical_subtotal += $subtotal;
+            $physical_subtotal += $line_total;
             $has_physical = true;
         } else {
-            $digital_subtotal += $subtotal;
+            $digital_subtotal += $line_total;
         }
-        
+
         $cart_items[] = [
-            'product' => $p,
+            'product'  => $p,
             'quantity' => $qty,
-            'subtotal' => $subtotal
+            'subtotal' => $line_total
         ];
     }
 }
 
-$shipping = calculate_shipping($physical_subtotal);
-$total = $physical_subtotal + $digital_subtotal + $shipping;
+$shipping = $has_physical ? calculate_shipping($subtotal) : 0;
+$subtotal  = $physical_subtotal + $digital_subtotal;
+$total     = $subtotal + $shipping;
 ?>
 
-<h2>Checkout</h2>
-<div style="display: flex; flex-wrap: wrap; gap: 30px;">
-    <div style="flex: 2; min-width: 300px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-        <h3>Shipping & Billing Information</h3>
+<div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
+    <h2 style="margin: 0;">Checkout</h2>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: start;">
+
+    <!-- Information Form -->
+    <div style="background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <h3 style="margin: 0 0 25px; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">Shipping & Billing</h3>
+        
         <form method="POST" action="<?php echo $base_url; ?>/api/checkout-place-order.php" id="checkout-form">
             <?php echo csrf_field(); ?>
-            <div style="margin-bottom: 15px;">
-                <label>Full Name</label><br>
-                <input type="text" name="shipping_name" required style="width: 100%; padding: 8px;">
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Order Name (Recipient)</label>
+                <input type="text" name="ship_name" required placeholder="John Doe"
+                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
             </div>
-            
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Contact Phone</label>
+                <input type="text" name="ship_phone" placeholder="+1..."
+                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            </div>
+
             <?php if ($has_physical): ?>
-                <div style="margin-bottom: 15px;">
-                    <label>Shipping Address</label><br>
-                    <textarea name="shipping_address" required style="width: 100%; padding: 8px; height: 80px;"></textarea>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Delivery Address</label>
+                    <input type="text" name="ship_address1" required placeholder="Street address"
+                           style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 10px;">
+                    <input type="text" name="ship_address2" placeholder="Apartment, suite, etc. (optional)"
+                           style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;">
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 5px;">City</label>
+                        <input type="text" name="ship_city" required
+                               style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 5px;">Country</label>
+                        <input type="text" name="ship_country" required
+                               style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    </div>
                 </div>
             <?php else: ?>
-                <div style="background: #e9ecef; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                    <em>Only digital items in cart. No shipping address required.</em>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin-bottom: 25px; border: 1px solid #e2e8f0; font-size: 0.85rem; color: #64748b;">
+                    Only digital products in cart. Delivery address is not required.
                 </div>
             <?php endif; ?>
-            
-            <button type="submit" class="btn" style="width: 100%; background: #27ae60; font-size: 1.1rem; padding: 12px;">Place Order</button>
+
+            <button type="submit" class="btn" style="width: 100%; padding: 14px; border-radius: 6px; font-weight: bold; font-size: 1rem;">
+                Confirm & Place Order
+            </button>
         </form>
     </div>
-    
-    <div style="flex: 1; min-width: 300px; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
-        <h3>Order Summary</h3>
-        <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
-            <?php foreach ($cart_items as $item): ?>
-                <li style="display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
-                    <span><?php echo h($item['product']['name']); ?> (x<?php echo $item['quantity']; ?>)</span>
-                    <span>£<?php echo number_format($item['subtotal'], 2); ?></span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+
+    <!-- Summary -->
+    <div style="background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <h3 style="margin: 0 0 20px; font-size: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Order Summary</h3>
         
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span>Subtotal (Physical):</span>
-            <span>£<?php echo number_format($physical_subtotal, 2); ?></span>
+        <div style="margin-bottom: 20px;">
+            <?php foreach ($cart_items as $item): ?>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; padding: 6px 0; border-bottom: 1px dashed #f1f5f9;">
+                <span style="color: #475569;"><?php echo h($item['product']['name']); ?> (x<?php echo $item['quantity']; ?>)</span>
+                <span style="font-weight: 500;">£<?php echo number_format($item['subtotal'], 2); ?></span>
+            </div>
+            <?php endforeach; ?>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span>Subtotal (Digital):</span>
-            <span>£<?php echo number_format($digital_subtotal, 2); ?></span>
+
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px;">
+            <span style="color: #64748b;">Subtotal</span>
+            <span>£<?php echo number_format($subtotal, 2); ?></span>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-            <span>Shipping:</span>
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 20px;">
+            <span style="color: #64748b;">Shipping</span>
             <span>£<?php echo number_format($shipping, 2); ?></span>
         </div>
-        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; border-top: 2px solid #333; padding-top: 10px;">
-            <span>Total:</span>
+        
+        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.25rem; border-top: 2px solid #f1f5f9; padding-top: 15px; color: var(--primary-color);">
+            <span>Order Total</span>
             <span>£<?php echo number_format($total, 2); ?></span>
         </div>
     </div>
+
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

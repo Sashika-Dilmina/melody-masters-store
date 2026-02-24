@@ -17,7 +17,4 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Simple helper to safely print (for later pages)
-function e(string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
+// (Function e() moved to includes/functions.php)

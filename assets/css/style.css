@@ -59,12 +59,15 @@ a:hover {
 
 /* Navbar */
 .navbar {
-    background-color: var(--navbar-bg);
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 1rem 0;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 0;
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 1000;
+    transition: all 0.3s ease;
 }
 
 .navbar-container {
@@ -74,10 +77,14 @@ a:hover {
 }
 
 .navbar-brand {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 800;
     color: var(--primary-color);
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .navbar-brand:hover {
@@ -87,28 +94,47 @@ a:hover {
 .navbar-nav {
     list-style: none;
     display: flex;
-    gap: 1.5rem;
+    gap: 1.75rem;
     align-items: center;
 }
 
 .navbar-nav a {
     color: var(--text-color);
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
+    position: relative;
+    padding: 4px 0;
     transition: color 0.2s ease;
 }
 
-.navbar-nav a:hover {
+.navbar-nav a:not(.btn):hover {
     color: var(--secondary-color);
 }
 
+.navbar-nav a:not(.btn)::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--secondary-color);
+    transition: width 0.3s ease;
+}
+
+.navbar-nav a:not(.btn):hover::after {
+    width: 100%;
+}
+
 .badge {
-    background: var(--secondary-color);
+    background: var(--primary-color);
     color: #fff;
-    padding: 2px 8px;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: 2px;
+    vertical-align: top;
 }
 
 /* Footer */

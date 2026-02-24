@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt = execute_query("INSERT INTO reviews (product_id, user_id, rating, comment) VALUES (?, ?, ?, ?)", "iiis", [$product_id, $user_id, $rating, $comment]);
+    $stmt = execute_query("INSERT INTO reviews (product_id, user_id, rating, comment, is_approved) VALUES (?, ?, ?, ?, 1)", "iiis", [$product_id, $user_id, $rating, $comment]);
     
     if ($stmt) {
         set_flash_message('success', 'Thank you for your review!');
