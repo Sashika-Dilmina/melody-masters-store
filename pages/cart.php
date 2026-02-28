@@ -45,13 +45,13 @@ $shipping = $has_physical ? calculate_shipping($subtotal) : 0;
 $total = $subtotal + $shipping;
 ?>
 
-<div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+<div class="responsive-header" style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
     <h2 style="margin: 0;">Shopping Cart</h2>
     <a href="<?php echo $base_url; ?>/pages/shop.php" style="color: var(--secondary-color); text-decoration: none; font-size: 0.9rem;">&larr; Back to Shop</a>
 </div>
 
 <?php if (empty($cart_items)): ?>
-    <div style="background: #fff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 8px; text-align: center;">
+    <div class="responsive-box" style="background: #fff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 8px; text-align: center;">
         <p style="color: #64748b; margin-bottom: 20px;">Your cart is currently empty.</p>
         <a href="shop.php" class="btn">Browse Shop</a>
     </div>
@@ -60,7 +60,7 @@ $total = $subtotal + $shipping;
         
         <!-- Cart Table -->
         <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-            <table style="width: 100%; border-collapse: collapse;">
+            <table class="cart-mobile-table" style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 0.8rem; color: #64748b; text-transform: uppercase;">
                         <th style="padding: 15px;">Item</th>
@@ -73,12 +73,12 @@ $total = $subtotal + $shipping;
                 <tbody>
                     <?php foreach ($cart_items as $item): ?>
                     <tr style="border-bottom: 1px solid #f1f5f9; font-size: 0.95rem;">
-                        <td style="padding: 15px;">
+                        <td data-label="Item" style="padding: 15px;">
                             <div style="font-weight: 600;"><?php echo h($item['product']['name']); ?></div>
                             <div style="font-size: 0.75rem; color: #94a3b8;"><?php echo ucfirst($item['product']['product_type']); ?></div>
                         </td>
-                        <td style="padding: 15px; text-align: center;">£<?php echo number_format($item['product']['price'], 2); ?></td>
-                        <td style="padding: 15px; text-align: center;">
+                        <td data-label="Price" style="padding: 15px; text-align: center;">£<?php echo number_format($item['product']['price'], 2); ?></td>
+                        <td data-label="Quantity" style="padding: 15px; text-align: center;">
                             <form method="POST" action="<?php echo $base_url; ?>/api/cart-update.php" style="display: flex; gap: 5px; justify-content: center;">
                                 <?php echo csrf_field(); ?>
                                 <input type="hidden" name="product_id" value="<?php echo $item['product']['id']; ?>">
@@ -92,8 +92,8 @@ $total = $subtotal + $shipping;
                                 <button type="submit" style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; font-size: 0.7rem; cursor: pointer;">Set</button>
                             </form>
                         </td>
-                        <td style="padding: 15px; text-align: right; font-weight: bold;">£<?php echo number_format($item['subtotal'], 2); ?></td>
-                        <td style="padding: 15px; text-align: center;">
+                        <td data-label="Total" style="padding: 15px; text-align: right; font-weight: bold;">£<?php echo number_format($item['subtotal'], 2); ?></td>
+                        <td data-label="Action" style="padding: 15px; text-align: center;">
                             <form method="POST" action="<?php echo $base_url; ?>/api/cart-remove.php">
                                 <?php echo csrf_field(); ?>
                                 <input type="hidden" name="product_id" value="<?php echo $item['product']['id']; ?>">
@@ -107,7 +107,7 @@ $total = $subtotal + $shipping;
         </div>
 
         <!-- Summary -->
-        <div style="background: #fff; border: 1px solid #e2e8f0; padding: 25px; border-radius: 12px; position: sticky; top: 100px;">
+        <div class="responsive-box" style="background: #fff; border: 1px solid #e2e8f0; padding: 25px; border-radius: 12px; position: sticky; top: 100px;">
             <h3 style="margin: 0 0 20px; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Summary</h3>
             
             <?php if ($has_physical): ?>

@@ -45,8 +45,8 @@ if (!empty($ids)) {
     }
 }
 
-$shipping = $has_physical ? calculate_shipping($subtotal) : 0;
 $subtotal  = $physical_subtotal + $digital_subtotal;
+$shipping = $has_physical ? calculate_shipping($subtotal) : 0;
 $total     = $subtotal + $shipping;
 ?>
 
@@ -57,7 +57,7 @@ $total     = $subtotal + $shipping;
 <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: start;">
 
     <!-- Information Form -->
-    <div style="background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <div class="responsive-box" style="background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0;">
         <h3 style="margin: 0 0 25px; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">Shipping & Billing</h3>
         
         <form method="POST" action="<?php echo $base_url; ?>/api/checkout-place-order.php" id="checkout-form">
@@ -109,7 +109,7 @@ $total     = $subtotal + $shipping;
     </div>
 
     <!-- Summary -->
-    <div style="background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <div class="responsive-box" style="background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0;">
         <h3 style="margin: 0 0 20px; font-size: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Order Summary</h3>
         
         <div style="margin-bottom: 20px;">

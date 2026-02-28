@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php echo csrf_field(); ?>
             <div style="margin-bottom: 20px;">
                 <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Full Name</label>
-                <input type="text" name="full_name" required placeholder="John Doe"
+                <input type="text" name="full_name" required placeholder="Sashika Dilmina"
                        style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background: #fff; transition: all 0.2s ease;"
                        value="<?php echo h($_POST['full_name'] ?? ''); ?>">
             </div>

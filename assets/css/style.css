@@ -260,3 +260,101 @@ tr:last-child td {
 tr:hover td {
     background-color: #f8fafc;
 }
+
+/* ========================================= */
+/*       Mobile Responsiveness Styles          */
+/* ========================================= */
+@media screen and (max-width: 768px) {
+    /* General Container Adjustments */
+    .container {
+        width: 95% !important;
+    }
+
+    .main-content {
+        padding: 20px 0;
+    }
+
+    /* Navbar Responsiveness */
+    .navbar-container {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding-bottom: 0.5rem;
+    }
+    
+    .navbar-nav {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 0.75rem !important;
+        margin-top: 0.5rem;
+    }
+
+    .navbar-nav li[style] {
+        margin-left: 0 !important;
+        border-left: none !important;
+        padding-left: 0 !important;
+    }
+    
+    .navbar-nav a.btn {
+        width: 100%;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    /* Responsive Grids: collapse all inline configured grids */
+    div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    /* Cart & Checkout Specific Overrides */
+    .cart-mobile-table, .cart-mobile-table tbody, .cart-mobile-table tr, .cart-mobile-table td {
+        display: block !important;
+        width: 100% !important;
+        white-space: normal !important;
+        box-sizing: border-box;
+    }
+    .cart-mobile-table thead {
+        display: none !important;
+    }
+    .cart-mobile-table tr {
+        margin-bottom: 15px !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .cart-mobile-table td {
+        text-align: right !important;
+        padding: 10px 15px !important;
+        position: relative;
+        border-bottom: 1px solid #f1f5f9 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    .cart-mobile-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-light);
+        margin-right: 15px;
+    }
+    .cart-mobile-table td:last-child {
+        border-bottom: none !important;
+        justify-content: flex-end !important;
+    }
+
+    .responsive-box { padding: 15px !important; }
+    
+    .responsive-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+
+    /* Responsive Tables fallback */
+    table:not(.cart-mobile-table) {
+        display: block !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        width: 100% !important;
+    }
+}

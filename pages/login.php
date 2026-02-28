@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php echo csrf_field(); ?>
             <div style="margin-bottom: 24px;">
                 <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Email</label>
-                <input type="email" name="email" required placeholder="sashika@example.com"
+                <input type="email" name="email" required placeholder="name@example.com"
                        style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background: #fff; transition: all 0.2s ease;"
                        value="<?php echo h($_POST['email'] ?? ''); ?>">
             </div>
