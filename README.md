@@ -65,3 +65,61 @@ This project includes a **complete UI redesign** to achieve a premium music-stor
 ---
 
 ## 🧠 System Architecture
+    
+  Client (Browser)
+  ↓
+  PHP Application Layer
+  ↓
+  MySQL Relational Database
+
+
+# 🏗️ Technology Stack
+
+## Frontend
+- HTML5  
+- CSS3 (Flexbox + Grid)  
+- Vanilla JavaScript  
+- Responsive Design  
+
+## Backend
+- PHP (Procedural)  
+- MySQL  
+- Session Management  
+
+## Development Tools
+- XAMPP / WAMP  
+- phpMyAdmin  
+- VS Code  
+- Antigravity (UI enhancement)  
+
+---
+
+
+---
+
+# ⚙️ Installation Guide (Complete Setup)
+
+Follow carefully to run the project locally.
+
+---
+
+## ✅ Prerequisites
+
+Install the following:
+
+- XAMPP or WAMP  
+- PHP 8+  
+- MySQL / MariaDB  
+- Web browser (Chrome recommended)  
+- VS Code (optional but recommended)  
+
+---
+
+## 1️⃣ Clone or Download Project
+
+### Option A — Git Clone
+
+```bash
+git clone https://github.com/your-username/melody-masters-store.git
+cd melody-masters-store
+
