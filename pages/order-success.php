@@ -27,69 +27,74 @@ $items = fetch_all(
 
 $has_digital = false;
 foreach ($items as $item) {
-    if ($item['product_type'] === 'digital') { $has_digital = true; break; }
+    if (strtoupper($item['product_type']) === 'DIGITAL') { $has_digital = true; break; }
 }
 ?>
 
-<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+<div class="section reveal" style="max-width: 800px; margin: 0 auto;">
 
     <!-- Success Header -->
-    <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="color: #10b981; font-size: 2rem; margin-bottom: 10px;">Order Confirmation</h1>
-        <p style="color: #64748b; font-size: 1rem;">
-            Successfully placed order reference <strong>#<?php echo $order_id; ?></strong>.
-        </p>
+    <div class="text-center mb-5">
+        <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.05);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h1 class="title" style="color: var(--success); font-size: 2.5rem; margin-bottom: 0.5rem;">Payment Successful!</h1>
+        <p class="subtitle mb-4">Your order reference is <strong>#<?php echo $order_id; ?></strong>.</p>
         <?php if ($order['order_number']): ?>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 5px;">Tracking ID: <?php echo h($order['order_number']); ?></p>
+            <span class="badge badge-status" style="padding: 0.5rem 1rem;">Tracking ID: <?php echo h($order['order_number']); ?></span>
         <?php endif; ?>
     </div>
 
     <!-- Order Items Summary -->
-    <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 30px;">
-        <div style="padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 0.9rem;">
-            Items Purchased
+    <div class="card mb-5" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1.5rem 2rem; background: var(--bg-soft); border-bottom: 1px solid var(--border);">
+            <h3 style="font-size: 1.1rem; margin: 0;">Order Summary</h3>
         </div>
-        <div style="padding: 20px;">
-            <?php foreach ($items as $item): ?>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 0.95rem; border-bottom: 1px solid #f1f5f9;">
-                <div>
-                    <?php echo h($item['product_name']); ?>
-                    <span style="color: #94a3b8; font-size: 0.8rem; margin-left: 5px;">(Qty: <?php echo (int)$item['quantity']; ?>)</span>
+        <div style="padding: 2rem;">
+            <div class="stack mb-4" style="gap: 1rem;">
+                <?php foreach ($items as $item): ?>
+                <div class="space-between" style="padding-bottom: 0.75rem; border-bottom: 1px dashed var(--border);">
+                    <div>
+                        <span style="font-weight: 700; color: var(--primary);"><?php echo h($item['product_name']); ?></span>
+                        <span class="muted" style="font-size: 0.85rem; margin-left: 8px;">× <?php echo (int)$item['quantity']; ?></span>
+                    </div>
+                    <span style="font-weight: 700; color: var(--primary_light);">£<?php echo number_format($item['line_total'], 2); ?></span>
                 </div>
-                <div style="font-weight: 500;">£<?php echo number_format($item['line_total'], 2); ?></div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
 
-            <div style="margin-top: 20px; border-top: 2px solid #f1f5f9; padding-top: 15px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #64748b; margin-bottom: 5px;">
-                    <span>Subtotal</span>
-                    <span>£<?php echo number_format($order['subtotal'], 2); ?></span>
+            <div class="stack" style="gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1.5px solid var(--bg-soft);">
+                <div class="space-between text-sm muted">
+                    <span>Net Subtotal</span>
+                    <span style="font-weight: 600;">£<?php echo number_format($order['subtotal'], 2); ?></span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #64748b; margin-bottom: 5px;">
-                    <span>Shipping</span>
-                    <span>£<?php echo number_format($order['shipping_amount'], 2); ?></span>
+                <div class="space-between text-sm muted">
+                    <span>Shipping Fee</span>
+                    <span style="font-weight: 600;"><?php echo $order['shipping_amount'] > 0 ? '£' . number_format($order['shipping_amount'], 2) : 'FREE'; ?></span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; margin-top: 10px;">
-                    <span>Grand Total</span>
-                    <span style="color: var(--primary-color);">£<?php echo number_format($order['total_amount'], 2); ?></span>
+                <div class="divider" style="margin: 1rem 0;"></div>
+                <div class="space-between">
+                    <span style="font-weight: 800; font-size: 1.25rem; color: var(--primary);">Total Paid</span>
+                    <span style="font-weight: 800; font-size: 1.75rem; color: var(--accent);">£<?php echo number_format($order['total_amount'], 2); ?></span>
                 </div>
             </div>
         </div>
     </div>
 
     <?php if ($has_digital): ?>
-    <div style="background: #f0f7ff; border: 1px solid #dbeafe; padding: 15px; border-radius: 6px; margin-bottom: 30px; font-size: 0.9rem; color: #1e40af; text-align: center;">
-        Your digital products are ready for access. Visit your download center to get started.
+    <div class="alert alert-info mb-5" style="text-align: center; justify-content: center; padding: 1.5rem;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span style="font-weight: 600;">Success! Your digital assets are now available in your personal library.</span>
     </div>
     <?php endif; ?>
 
     <!-- Navigation Actions -->
-    <div style="display: flex; gap: 10px;">
-        <a href="account.php" class="btn" style="flex: 1; text-align: center; padding: 12px; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff; color: #475569;">My Account</a>
+    <div class="row" style="gap: 1.25rem; flex-wrap: wrap;">
+        <a href="account.php" class="btn btn-outline" style="flex: 1; padding: 1rem; min-width: 150px;">Go to Profile</a>
         <?php if ($has_digital): ?>
-            <a href="downloads.php" class="btn" style="flex: 1; text-align: center; padding: 12px; border-radius: 4px;">Download Library</a>
+            <a href="downloads.php" class="btn btn-primary" style="flex: 1; padding: 1rem; background: var(--teal); color: white; min-width: 150px;">Access Downloads</a>
         <?php endif; ?>
-        <a href="shop.php" class="btn" style="flex: 1; text-align: center; padding: 12px; border-radius: 4px; background: var(--secondary-color);">Return to Shop</a>
+        <a href="shop.php" class="btn btn-primary" style="flex: 1; padding: 1rem; min-width: 150px;">Back to Store</a>
     </div>
 
 </div>

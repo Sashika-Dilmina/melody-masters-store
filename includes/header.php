@@ -14,7 +14,10 @@ require_once __DIR__ . '/csrf.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Melody Masters</title>
-    <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/ui.css">
+    <?php if (str_contains($_SERVER['REQUEST_URI'], 'login.php') || str_contains($_SERVER['REQUEST_URI'], 'register.php')): ?>
+    <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/auth.css">
+    <?php endif; ?>
 </head>
 <body>
 <?php include __DIR__ . '/navbar.php'; ?>

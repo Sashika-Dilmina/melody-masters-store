@@ -26,104 +26,148 @@ if (!$is_admin) {
 }
 ?>
 
-<div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
-    <h2 style="margin: 0;">My Account</h2>
-    <p style="color: #64748b; margin-top: 5px;">Welcome, <?php echo h($user['full_name']); ?></p>
+<div class="mb-5 reveal">
+    <h1 class="title" style="font-size: 2rem;">My Dashboard</h1>
+    <p class="muted">Hello, <strong><?php echo h($user['full_name']); ?></strong>. Welcome back to your musical hub.</p>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
+<div class="grid grid-3 mb-5 reveal" style="animation-delay: 0.1s;">
     <?php if (!$is_admin): ?>
-        <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-            <h4 style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px;">Total Orders</h4>
-            <p style="font-size: 1.5rem; font-weight: bold; margin: 0;"><?php echo $order_count; ?></p>
-        </div>
-        <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-            <h4 style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px;">Digital Assets</h4>
-            <p style="font-size: 1.5rem; font-weight: bold; margin: 0;"><?php echo $download_count; ?></p>
-        </div>
-    <?php endif; ?>
-    
-    <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-        <h4 style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px;">Member Role</h4>
-        <p style="font-size: 1.2rem; font-weight: bold; margin: 0; padding-top: 5px; color: var(--secondary-color);"><?php echo ucfirst(h($user['role'])); ?></p>
-    </div>
-    
-    <?php if ($is_admin): ?>
-        <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-            <h4 style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px;">Access Level</h4>
-            <p style="font-size: 1.1rem; font-weight: bold; margin: 0; padding-top: 5px; color: #10b981;">Full Administrative</p>
-        </div>
-    <?php endif; ?>
-</div>
-
-<div style="display: grid; grid-template-columns: <?php echo $is_admin ? '1fr' : '1fr 1fr'; ?>; gap: 30px; align-items: start;">
-    
-    <!-- Profile Section -->
-    <div style="background: #fff; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
-            <h3 style="margin: 0; font-size: 1.1rem;">Profile Details</h3>
-            <a href="profile-edit.php" style="font-size: 0.85rem; color: var(--secondary-color);">Edit Profile</a>
-        </div>
-        <div style="line-height: 2;">
-            <div><span style="color: #64748b; font-size: 0.85rem;">Name:</span> <span style="font-weight: 500;"><?php echo h($user['full_name']); ?></span></div>
-            <div><span style="color: #64748b; font-size: 0.85rem;">Email:</span> <span style="font-weight: 500;"><?php echo h($user['email']); ?></span></div>
-        </div>
-    </div>
-
-    <?php if (!$is_admin): ?>
-        <!-- Recent Orders (Customers only) -->
-        <div style="background: #fff; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
-                <h3 style="margin: 0; font-size: 1.1rem;">Recent Orders</h3>
-                <a href="orders.php" style="font-size: 0.85rem; color: var(--secondary-color);">All Orders</a>
+        <div class="card card-hover text-center" style="padding: 2rem; border-color: rgba(59, 130, 246, 0.2);">
+            <div style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
             </div>
-            
-            <?php if (empty($recent_orders)): ?>
-                <p style="color: #94a3b8; font-size: 0.9rem;">No orders found.</p>
-            <?php else: ?>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <?php foreach ($recent_orders as $order): ?>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 6px; font-size: 0.9rem;">
-                        <div>
-                            <div style="font-weight: bold;">Order #<?php echo $order['id']; ?></div>
-                            <div style="font-size: 0.75rem; color: #94a3b8;"><?php echo date('d M Y', strtotime($order['created_at'])); ?></div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-weight: bold;">£<?php echo number_format($order['total_amount'], 2); ?></div>
-                            <div style="font-size: 0.75rem; color: var(--secondary-color);"><?php echo ucfirst($order['status']); ?></div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <h4 class="text-xs muted mb-1" style="text-transform: uppercase; font-weight: 700;">Total Orders</h4>
+            <p style="font-size: 2rem; font-weight: 800; color: var(--primary);"><?php echo $order_count; ?></p>
         </div>
-    <?php else: ?>
-        <!-- Administrative Panel Shortcut for Admins -->
-        <div style="background: #f8fafc; padding: 30px; border-radius: 12px; border: 1px dashed #cbd5e1; text-align: center;">
-            <h3 style="margin: 0 0 10px; font-size: 1.1rem; color: var(--primary-color);">Management Access</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">You are currently logged in as a store administrator. System-wide management tools are available in the Admin Panel.</p>
-            <a href="<?php echo $base_url; ?>/admin/dashboard.php" class="btn" style="padding: 10px 25px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">Go to Admin Panel</a>
+        <div class="card card-hover text-center" style="padding: 2rem; border-color: rgba(20, 184, 166, 0.2);">
+             <div style="width: 40px; height: 40px; background: rgba(20, 184, 166, 0.1); color: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </div>
+            <h4 class="text-xs muted mb-1" style="text-transform: uppercase; font-weight: 700;">Digital Library</h4>
+            <p style="font-size: 2rem; font-weight: 800; color: var(--primary);"><?php echo $download_count; ?></p>
         </div>
     <?php endif; ?>
     
-    <!-- Quick Links -->
-    <div style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+    <div class="card card-hover text-center" style="padding: 2rem; border-color: rgba(11, 18, 32, 0.1);">
+         <div style="width: 40px; height: 40px; background: rgba(11, 18, 32, 0.05); color: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <h4 class="text-xs muted mb-1" style="text-transform: uppercase; font-weight: 700;">Membership Status</h4>
+        <p style="font-size: 1.25rem; font-weight: 800; color: var(--accent);"><?php echo ucfirst(h($user['role'])); ?></p>
+    </div>
+</div>
+
+<div class="dashboard-layout reveal" style="animation-delay: 0.2s;">
+    <!-- Sidebar / Quick Links -->
+    <div class="stack">
+        <div class="card" style="padding: 1.5rem;">
+            <h3 class="mb-4" style="font-size: 1.1rem;">Account Settings</h3>
+            <div class="sidebar-nav">
+                <a href="<?php echo $base_url; ?>/pages/account.php" class="sidebar-link active">
+                    <svg style="margin-right: 12px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard Overview
+                </a>
+                <?php if (!$is_admin): ?>
+                    <a href="orders.php" class="sidebar-link">
+                        <svg style="margin-right: 12px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        Order History
+                    </a>
+                    <a href="downloads.php" class="sidebar-link">
+                        <svg style="margin-right: 12px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Digital Library
+                    </a>
+                <?php endif; ?>
+                <a href="profile-edit.php" class="sidebar-link">
+                    <svg style="margin-right: 12px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Personal Details
+                </a>
+                <div class="divider" style="margin: 1rem 0;"></div>
+                <a href="logout.php" class="sidebar-link" style="color: var(--error);">
+                    <svg style="margin-right: 12px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout Session
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="stack">
+        <div class="card">
+            <div class="space-between mb-5">
+                <h3 class="m-0" style="font-size: 1.25rem;">Profile Information</h3>
+                <a href="profile-edit.php" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Edit Details</a>
+            </div>
+            <div class="grid grid-2" style="gap: 2rem;">
+                <div>
+                    <label class="muted mb-1" style="font-weight: 500;">Full Name</label>
+                    <p style="font-weight: 700; font-size: 1.1rem;"><?php echo h($user['full_name']); ?></p>
+                </div>
+                <div>
+                    <label class="muted mb-1" style="font-weight: 500;">Email Address</label>
+                    <p style="font-weight: 700; font-size: 1.1rem;"><?php echo h($user['email']); ?></p>
+                </div>
+                <div>
+                    <label class="muted mb-1" style="font-weight: 500;">Account Since</label>
+                    <p style="font-weight: 700; font-size: 1.1rem;"><?php echo date('F Y', strtotime($user['created_at'])); ?></p>
+                </div>
+                <div>
+                    <label class="muted mb-1" style="font-weight: 500;">Language Preference</label>
+                    <p style="font-weight: 700; font-size: 1.1rem;">English (UK)</p>
+                </div>
+            </div>
+        </div>
+
         <?php if (!$is_admin): ?>
-            <a href="downloads.php" class="btn" style="background: #fff; color: var(--text-color); border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; text-decoration: none; text-align: center;">
-                My Digital Downloads
-            </a>
-            <a href="orders.php" class="btn" style="background: #fff; color: var(--text-color); border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; text-decoration: none; text-align: center;">
-                Order History
-            </a>
+            <div class="card">
+                <div class="space-between mb-5">
+                    <h3 class="m-0" style="font-size: 1.25rem;">Recent Order Activity</h3>
+                    <a href="orders.php" class="btn btn-link">See all history &rarr;</a>
+                </div>
+                
+                <?php if (empty($recent_orders)): ?>
+                    <div class="text-center" style="padding: 2rem;">
+                        <p class="muted">No orders placed yet. <a href="<?php echo $base_url; ?>/pages/shop.php">Start exploring!</a></p>
+                    </div>
+                <?php else: ?>
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($recent_orders as $order): ?>
+                                <tr>
+                                    <td style="font-weight: 700;">#<?php echo $order['id']; ?></td>
+                                    <td class="muted"><?php echo date('d M Y', strtotime($order['created_at'])); ?></td>
+                                    <td>
+                                        <span class="badge badge-status <?php echo strtolower($order['status']); ?>">
+                                            <?php echo ucfirst($order['status']); ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-right" style="font-weight: 700;">£<?php echo number_format($order['total_amount'], 2); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php else: ?>
+            <div class="card" style="background: var(--bg-soft); border: 2px dashed var(--border); text-align: center; padding: 4rem 2rem;">
+                <div style="width: 60px; height: 60px; background: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: var(--shadow-sm);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                </div>
+                <h3 class="mb-2">Admin Management Interface</h3>
+                <p class="muted mb-5">You are currently logged in with administrative privileges. Access the full store management suite below.</p>
+                <a href="<?php echo $base_url; ?>/admin/dashboard.php" class="btn btn-primary" style="padding: 1rem 2.5rem;">Launch Admin Panel</a>
+            </div>
         <?php endif; ?>
-        
-        <a href="profile-edit.php" class="btn" style="background: #fff; color: var(--text-color); border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; text-decoration: none; text-align: center;">
-            Update Profile Settings
-        </a>
-        
-        <a href="logout.php" class="btn" style="background: #fff; color: #ef4444; border: 1px solid #fee2e2; padding: 15px; border-radius: 8px; text-decoration: none; text-align: center;">
-            Logout
-        </a>
     </div>
 </div>
 

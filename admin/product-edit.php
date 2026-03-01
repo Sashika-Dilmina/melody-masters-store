@@ -7,7 +7,7 @@ $id      = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $product = fetch_one("SELECT * FROM products WHERE id = ?", "i", [$id]);
 
 if (!$product) {
-    set_flash_message('error', 'Item not found.');
+    set_flash_message('error', 'Item record not found in database.');
     header('Location: products.php');
     exit;
 }
@@ -43,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sku          = sanitize_input($_POST['sku']                ?? '');
     $is_active    = isset($_POST['is_active']) ? 1 : 0;
 
-    if (empty($name))      $errors[] = 'Title required.';
-    if ($price <= 0)       $errors[] = 'Price must be positive.';
-    if ($category_id <= 0) $errors[] = 'Select category.';
+    if (empty($name))      $errors[] = 'Product title is required.';
+    if ($price <= 0)       $errors[] = 'Unit price must be positive.';
+    if ($category_id <= 0) $errors[] = 'Category classification is required.';
 
     $image_path = $product['image_path'];
     $file_url   = $product['file_url'];
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              $stock_qty, $sku, $short_desc, $description,
              $image_path, $file_url, $is_active, $id]
         );
-        set_flash_message('success', 'Product modified.');
+        set_flash_message('success', 'Changes committed successfully.');
         header('Location: products.php');
         exit;
     } else {
@@ -93,105 +93,140 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-    <h2 style="margin: 0;">Edit Product Record</h2>
-    <a href="products.php" style="font-size: 0.9rem; color: #64748b;">Return to List</a>
+<div class="space-between mb-5 reveal">
+    <div>
+        <h1 class="title" style="font-size: 2rem; margin: 0;">Edit Product: <?php echo h($product['name']); ?></h1>
+        <p class="muted">Modify technical specifications, pricing, and distribution assets.</p>
+    </div>
+    <a href="products.php" class="btn btn-outline" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">
+        &larr; Back to Catalog
+    </a>
 </div>
 
-<div style="background: #fff; padding: 30px; border: 1px solid #e2e8f0; border-radius: 8px; max-width: 800px;">
+<div class="reveal" style="animation-delay: 0.1s;">
     <form method="POST" action="" enctype="multipart/form-data">
         <?php echo csrf_field(); ?>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-
-            <div style="grid-column: 1 / -1;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Product Identification Name</label>
-                <input type="text" name="name" required value="<?php echo h($product['name']); ?>"
-                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            </div>
-
-            <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Category Group</label>
-                <select name="category_id" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <?php foreach ($categories as $cat): ?>
-                        <option value="<?php echo $cat['id']; ?>" <?php echo $cat['id'] == $product['category_id'] ? 'selected' : ''; ?>>
-                            <?php echo h($cat['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Manufacturer/Brand</label>
-                <input type="text" name="brand" value="<?php echo h($product['brand'] ?? ''); ?>"
-                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            </div>
-
-            <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Unit Price (GBP)</label>
-                <input type="number" step="0.01" min="0.01" name="price" required value="<?php echo h($product['price']); ?>"
-                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            </div>
-
-            <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Product Type</label>
-                <select name="type" id="product_type" onchange="toggleFields()" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <option value="physical" <?php echo $product['product_type'] === 'physical' ? 'selected' : ''; ?>>Physical Asset</option>
-                    <option value="digital" <?php echo $product['product_type'] === 'digital' ? 'selected' : ''; ?>>Digital Distribution</option>
-                </select>
-            </div>
-
-            <div id="stock_field">
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Inventory Quantity</label>
-                <input type="number" name="stock_qty" min="0" value="<?php echo (int)$product['stock_qty']; ?>"
-                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            </div>
-
-            <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Product Code (SKU)</label>
-                <input type="text" name="sku" value="<?php echo h($product['sku'] ?? ''); ?>"
-                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            </div>
-
-            <div style="grid-column: 1 / -1;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Brief Summary</label>
-                <input type="text" name="short_description" maxlength="255" value="<?php echo h($product['short_description'] ?? ''); ?>"
-                       style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            </div>
-
-            <div style="grid-column: 1 / -1;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Complete Description</label>
-                <textarea name="description" rows="4" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: vertical;"><?php echo h($product['description'] ?? ''); ?></textarea>
-            </div>
-
-            <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                <input type="checkbox" name="is_active" id="is_active" value="1" <?php echo $product['is_active'] ? 'checked' : ''; ?>>
-                <label for="is_active" style="font-size: 0.85rem; font-weight: 500;">Visible to Customers in Storefront</label>
-            </div>
-
-            <div style="grid-column: 1 / -1;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Product Asset Image</label>
-                <?php if ($product['image_path']): ?>
-                    <div style="margin-bottom: 10px;">
-                        <img src="<?php echo $base_url . '/uploads/products/' . h($product['image_path']); ?>" style="height: 60px; border-radius: 4px; border: 1px solid #e2e8f0;">
+        
+        <div class="dashboard-layout" style="grid-template-columns: 1.5fr 1fr; align-items: start;">
+            
+            <div class="stack">
+                <!-- Core Info Card -->
+                <div class="card" style="padding: 2.5rem;">
+                    <div class="space-between mb-5">
+                        <h3 class="m-0" style="font-size: 1.25rem;">Core Identification</h3>
+                        <div class="row" style="gap: 10px;">
+                             <input type="checkbox" name="is_active" id="is_active" value="1" <?php echo $product['is_active'] ? 'checked' : ''; ?>>
+                             <label for="is_active" class="text-xs" style="font-weight: 700; color: var(--primary);">ACTIVE ON STOREFRONT</label>
+                        </div>
                     </div>
-                <?php endif; ?>
-                <input type="file" name="image" accept="image/*" style="font-size: 0.85rem;">
+                    
+                    <div class="mb-4">
+                        <label class="mb-2" style="font-weight: 600;">Product Name <span style="color: var(--error);">*</span></label>
+                        <input type="text" name="name" required value="<?php echo h($product['name']); ?>" class="input">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="mb-2" style="font-weight: 600;">Brief Summary (Short Description)</label>
+                        <input type="text" name="short_description" maxlength="255" value="<?php echo h($product['short_description']); ?>" class="input">
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="mb-2" style="font-weight: 600;">Full Product Description</label>
+                        <textarea name="description" rows="10" class="textarea"><?php echo h($product['description']); ?></textarea>
+                    </div>
+                </div>
+
+                <!-- Media Assets Card -->
+                <div class="card" style="padding: 2.5rem;">
+                    <h3 class="mb-5" style="font-size: 1.25rem;">Distribution Assets</h3>
+                    
+                    <div class="mb-5">
+                        <label class="mb-2" style="font-weight: 600;">Primary Image</label>
+                        <div class="row mb-3" style="gap: 1.5rem; align-items: center;">
+                            <div style="width: 100px; height: 100px; background: var(--bg-soft); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">
+                                <?php if ($product['image_path']): ?>
+                                    <img src="<?php echo $base_url . '/uploads/products/' . h($product['image_path']); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                                <?php else: ?>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #cbd5e1;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                <?php endif; ?>
+                            </div>
+                            <div style="flex: 1;">
+                                <input type="file" name="image" accept="image/*" class="text-sm muted">
+                                <p class="text-xs muted mt-1">Upload a new image to overwrite the current one.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="digital_file_field" style="<?php echo $product['product_type'] === 'digital' ? '' : 'display: none;'; ?>">
+                        <label class="mb-2" style="font-weight: 600; color: var(--accent);">Digital Source PDF</label>
+                        <div style="background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px dashed rgba(59, 130, 246, 0.2);">
+                            <?php if ($product['file_url']): ?>
+                                <div class="row mb-3" style="gap: 8px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--success);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    <span class="text-xs muted">Current: <strong><?php echo h($product['file_url']); ?></strong></span>
+                                </div>
+                            <?php endif; ?>
+                            <input type="file" name="digital_file" class="text-sm muted">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div style="grid-column: 1 / -1;" id="digital_file_field">
-                <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">Digital Source File</label>
-                <?php if ($product['file_url']): ?>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 10px;">Current: <?php echo h($product['file_url']); ?></div>
-                <?php endif; ?>
-                <input type="file" name="digital_file" style="font-size: 0.85rem;">
+            <div class="stack">
+                <!-- Classification Card -->
+                <div class="card" style="padding: 2rem;">
+                    <h3 class="mb-4" style="font-size: 1.1rem;">Classification</h3>
+                    
+                    <div class="mb-4">
+                        <label class="mb-2" style="font-weight: 600;">Category Group <span style="color: var(--error);">*</span></label>
+                        <select name="category_id" required class="select">
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?php echo $cat['id']; ?>" <?php echo $cat['id'] == $product['category_id'] ? 'selected' : ''; ?>>
+                                    <?php echo h($cat['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="mb-2" style="font-weight: 600;">Distribution Type</label>
+                        <select name="type" id="product_type" onchange="toggleFields()" class="select">
+                            <option value="physical" <?php echo $product['product_type'] === 'physical' ? 'selected' : ''; ?>>Physical Asset</option>
+                            <option value="digital" <?php echo $product['product_type'] === 'digital' ? 'selected' : ''; ?>>Digital Distribution</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="mb-2" style="font-weight: 600;">Manufacturer / Brand</label>
+                        <input type="text" name="brand" value="<?php echo h($product['brand'] ?? ''); ?>" class="input">
+                    </div>
+                </div>
+
+                <!-- Commercial Card -->
+                <div class="card" style="padding: 2rem; border-top: 4px solid var(--accent);">
+                    <h3 class="mb-4" style="font-size: 1.1rem;">Commercial Details</h3>
+                    
+                    <div class="mb-4">
+                        <label class="mb-2" style="font-weight: 600;">Retail Price (GBP) <span style="color: var(--error);">*</span></label>
+                        <div style="position: relative;">
+                             <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted);">£</span>
+                             <input type="number" step="0.01" min="0.01" name="price" required value="<?php echo h($product['price']); ?>" class="input" style="padding-left: 2rem;">
+                        </div>
+                    </div>
+
+                    <div id="stock_field" style="<?php echo $product['product_type'] === 'digital' ? 'display: none;' : ''; ?>">
+                        <label class="mb-2" style="font-weight: 600;">Fulfillment SKU</label>
+                        <input type="text" name="sku" value="<?php echo h($product['sku'] ?? ''); ?>" class="input mb-4">
+                        
+                        <label class="mb-2" style="font-weight: 600;">Inventory Level</label>
+                        <input type="number" name="stock_qty" min="0" value="<?php echo (int)$product['stock_qty']; ?>" class="input">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; margin-top: 1rem;">Commit Changes</button>
+                    <a href="products.php" class="btn btn-outline" style="width: 100%; padding: 1rem; margin-top: 0.75rem;">Revert & Cancel</a>
+                </div>
             </div>
 
-        </div>
-
-        <div style="margin-top: 30px; display: flex; gap: 10px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
-            <button type="submit" class="btn" style="flex: 1; padding: 12px; border-radius: 4px; font-weight: bold;">Commit Changes</button>
-            <a href="products.php" class="btn" style="flex: 1; background: #fff; color: #64748b; border: 1px solid #cbd5e1; padding: 11px; border-radius: 4px; text-align: center;">Cancel</a>
         </div>
     </form>
 </div>

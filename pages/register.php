@@ -39,43 +39,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<div style="display: flex; min-height: 80vh; align-items: center; justify-content: center; padding: 40px 20px;">
-    <div style="width: 100%; max-width: 440px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 20px; padding: 50px 40px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);">
-        <div style="text-align: center; margin-bottom: 40px;">
-            <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--primary-color); letter-spacing: -0.02em; margin-bottom: 10px;">Create Profile</h2>
-            <p style="color: #64748b; font-size: 0.95rem;">Join the Melody Masters community</p>
+<div class="auth-page-wrapper">
+    <div class="auth-container">
+        <!-- Brand Panel -->
+        <div class="brand-panel">
+            <h1>Melody Masters</h1>
+            <p>Shop for musical instruments and digital masterclasses.</p>
         </div>
-        
-        <form method="POST" action="">
-            <?php echo csrf_field(); ?>
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Full Name</label>
-                <input type="text" name="full_name" required placeholder="Sashika Dilmina"
-                       style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background: #fff; transition: all 0.2s ease;"
-                       value="<?php echo h($_POST['full_name'] ?? ''); ?>">
-            </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Email</label>
-                <input type="email" name="email" required placeholder="name@example.com"
-                       style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background: #fff; transition: all 0.2s ease;"
-                       value="<?php echo h($_POST['email'] ?? ''); ?>">
-            </div>
+        <!-- Form Panel -->
+        <div class="form-panel">
+            <h2>Create Account</h2>
             
-            <div style="margin-bottom: 30px;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Password</label>
-                <input type="password" name="password" required placeholder="Min. 8 characters"
-                       style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background: #fff; transition: all 0.2s ease;">
-                <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 8px; font-weight: 500;">Complexity requirement: 8 characters minimum.</p>
+            <form method="POST" action="">
+                <?php echo csrf_field(); ?>
+                
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" name="full_name" id="full_name" required placeholder="Sashika Dilmina" class="auth-input" value="<?php echo h($_POST['full_name'] ?? ''); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" name="email" id="email" required placeholder="name@example.com" class="auth-input" value="<?php echo h($_POST['email'] ?? ''); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Create Password</label>
+                    <div class="password-box">
+                        <input type="password" name="password" id="password" required placeholder="Min. 8 characters" class="auth-input">
+                        <button type="button" class="toggle-btn" onclick="togglePass('password')">Show</button>
+                    </div>
+                    <p style="font-size: 11px; color: #888; margin-top: 5px;">Use 8+ characters.</p>
+                </div>
+
+                <button type="submit" class="btn-primary">Register Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.php">Sign In Instead</a></p>
             </div>
-            
-            <button type="submit" class="btn" style="width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; background: var(--primary-color); color: #fff; border: none; cursor: pointer; transition: all 0.2s ease;">Register</button>
-        </form>
-        
-        <div style="margin-top: 35px; text-align: center; font-size: 0.95rem; color: #64748b;">
-            Already Registered? <a href="login.php" style="color: var(--secondary-color); font-weight: 700; text-decoration: none;">Sign In</a>
         </div>
     </div>
 </div>
+
+<script>
+function togglePass(id) {
+    var input = document.getElementById(id);
+    var btn = input.nextElementSibling;
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "Hide";
+    } else {
+        input.type = "password";
+        btn.textContent = "Show";
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

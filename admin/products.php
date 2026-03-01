@@ -24,63 +24,85 @@ $products  = fetch_all("
 ");
 ?>
 
-<div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-    <h2 style="margin: 0;">Catalog Management</h2>
-    <div style="display: flex; gap: 15px; align-items: center;">
-        <a href="products.php<?php echo $show_all ? '' : '?show=all'; ?>" style="font-size: 0.85rem; color: #64748b;">
-            <?php echo $show_all ? 'Show Active Only' : 'Show Archive'; ?>
+<div class="space-between mb-5 reveal">
+    <div>
+        <h1 class="title" style="font-size: 2rem; margin: 0;">Catalog Management</h1>
+        <p class="muted">Manage your store's physical instruments and digital assets.</p>
+    </div>
+    <div class="row">
+        <a href="products.php<?php echo $show_all ? '' : '?show=all'; ?>" class="btn btn-outline" style="font-size: 0.85rem;">
+            <?php echo $show_all ? 'Show Active Only' : 'Show Archived'; ?>
         </a>
-        <a href="product-add.php" class="btn" style="padding: 8px 16px; border-radius: 6px;">Add Product</a>
+        <a href="product-add.php" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add New Product
+        </a>
     </div>
 </div>
 
-<div style="overflow-x: auto; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
-    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-        <thead>
-            <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left; color: #475569;">
-                <th style="padding: 15px;">ID</th>
-                <th style="padding: 15px;">Product</th>
-                <th style="padding: 15px;">Category</th>
-                <th style="padding: 15px;">Type</th>
-                <th style="padding: 15px; text-align: right;">Price</th>
-                <th style="padding: 15px; text-align: center;">Stock</th>
-                <th style="padding: 15px; text-align: center;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($products as $p): ?>
-            <tr style="border-bottom: 1px solid #f1f5f9; <?php echo $p['is_active'] ? '' : 'background: #fdf2f2;'; ?>">
-                <td style="padding: 15px;"><?php echo $p['id']; ?></td>
-                <td style="padding: 15px; font-weight: 600;"><?php echo h($p['name']); ?></td>
-                <td style="padding: 15px; color: #64748b;"><?php echo h($p['category_name'] ?? '—'); ?></td>
-                <td style="padding: 15px; font-size: 0.8rem; text-transform: uppercase; color: #94a3b8;"><?php echo $p['product_type']; ?></td>
-                <td style="padding: 15px; text-align: right; font-weight: 600;">£<?php echo number_format($p['price'], 2); ?></td>
-                <td style="padding: 15px; text-align: center;">
-                    <?php if ($p['product_type'] === 'physical'): ?>
-                        <span style="font-weight: 700; color: <?php echo $p['stock_qty'] <= 5 ? '#ef4444' : '#10b981'; ?>;">
-                            <?php echo $p['stock_qty']; ?>
-                        </span>
-                    <?php else: ?>
-                        <span style="color: #cbd5e1;">—</span>
-                    <?php endif; ?>
-                </td>
-                <td style="padding: 15px; text-align: center;">
-                    <div style="display: flex; gap: 8px; justify-content: center;">
-                        <a href="product-edit.php?id=<?php echo $p['id']; ?>" class="btn" style="padding: 5px 12px; font-size: 0.8rem; border-radius: 4px; background: #fff; color: var(--primary-color); border: 1px solid #e2e8f0;">Edit</a>
-                        <?php if ($p['is_active']): ?>
-                        <form method="POST" action="" style="display: inline;">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="delete_product" value="1">
-                            <input type="hidden" name="product_id" value="<?php echo $p['id']; ?>">
-                            <button type="submit" class="btn" style="padding: 5px 12px; font-size: 0.8rem; border-radius: 4px; background: #fff; color: #ef4444; border: 1px solid #fee2e2;" onclick="return confirm('Deactivate product?');">Deactivate</button>
-                        </form>
+<div class="card reveal" style="padding: 0; overflow: hidden;">
+    <div class="table-container" style="border: none;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product Details</th>
+                    <th>Category</th>
+                    <th class="text-right">Price</th>
+                    <th class="text-center">Stock</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($products as $p): ?>
+                <tr style="<?php echo $p['is_active'] ? '' : 'background: #fdf2f2; opacity: 0.8;'; ?>">
+                    <td class="muted" style="font-size: 0.8rem;">#<?php echo $p['id']; ?></td>
+                    <td>
+                        <div class="row">
+                            <div style="width: 40px; height: 40px; background: var(--bg-soft); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                <?php if ($p['image_path']): ?>
+                                    <img src="<?php echo $base_url . '/uploads/products/' . h($p['image_path']); ?>" style="width: 100%; height: 100%; object-fit: cover;" alt="Product">
+                                <?php else: ?>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #cbd5e1;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                <?php endif; ?>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--primary);"><?php echo h($p['name']); ?></div>
+                                <span class="badge <?php echo strtoupper($p['product_type']) === 'DIGITAL' ? 'badge-digital' : 'badge-physical'; ?>" style="font-size: 0.6rem; padding: 0.15rem 0.5rem;"><?php echo h($p['product_type']); ?></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="muted text-sm"><?php echo h($p['category_name'] ?? 'Uncategorized'); ?></span>
+                    </td>
+                    <td class="text-right" style="font-weight: 700;">£<?php echo number_format($p['price'], 2); ?></td>
+                    <td class="text-center">
+                        <?php if (strtoupper($p['product_type']) === 'PHYSICAL'): ?>
+                            <span style="font-weight: 800; color: <?php echo $p['stock_qty'] <= 5 ? 'var(--error)' : 'var(--success)'; ?>;">
+                                <?php echo $p['stock_qty']; ?>
+                            </span>
+                        <?php else: ?>
+                            <span class="muted" style="font-size: 1.25rem;">∞</span>
                         <?php endif; ?>
-                    </div>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+                    </td>
+                    <td class="text-right">
+                        <div class="row" style="justify-content: flex-end; gap: 0.5rem;">
+                            <a href="product-edit.php?id=<?php echo $p['id']; ?>" class="btn btn-outline" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; min-width: 60px;">Edit</a>
+                            <?php if ($p['is_active']): ?>
+                            <form method="POST" action="" style="display: inline;">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="delete_product" value="1">
+                                <input type="hidden" name="product_id" value="<?php echo $p['id']; ?>">
+                                <button type="submit" class="btn btn-outline" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; color: var(--error); border-color: rgba(239, 68, 68, 0.2); min-width: 80px;" onclick="return confirm('Archive this product?');">Archive</button>
+                            </form>
+                            <?php endif; ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     $allowed_staff = ['pending', 'processing', 'shipped', 'cancelled'];
     if (in_array($status, $allowed_staff)) {
         execute_query("UPDATE orders SET status = ? WHERE id = ?", "si", [$status, $order_id]);
-        set_flash_message('success', 'Order status modified.');
+        set_flash_message('success', "Order #$order_id fulfillment status updated.");
     }
     header('Location: orders.php');
     exit;
@@ -23,74 +23,74 @@ $orders = fetch_all("
     JOIN users u ON o.user_id = u.id
     ORDER BY o.created_at DESC
 ");
-
-$status_colors = [
-    'pending'    => ['bg' => '#fef3c7', 'text' => '#92400e'],
-    'paid'       => ['bg' => '#dcfce7', 'text' => '#166534'],
-    'processing' => ['bg' => '#dbeafe', 'text' => '#1e40af'],
-    'shipped'    => ['bg' => '#f0fdf4', 'text' => '#166534'],
-    'completed'  => ['bg' => '#dcfce7', 'text' => '#15803d'],
-    'cancelled'  => ['bg' => '#fee2e2', 'text' => '#991b1b'],
-];
 ?>
 
-<div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-    <h2 style="margin: 0;">Order Processing</h2>
-    <span style="color: #64748b; font-size: 0.9rem;"><?php echo count($orders); ?> Records Found</span>
+<div class="space-between mb-5 reveal">
+    <div>
+        <h1 class="title" style="font-size: 2rem; margin: 0;">Order Processing Center</h1>
+        <p class="muted">Manage logistical workflows and shipment tracking for customer orders.</p>
+    </div>
+    <div class="card card-hover" style="padding: 0.75rem 1.5rem; border-color: rgba(59, 130, 246, 0.1); background: rgba(59, 130, 246, 0.05);">
+        <span style="font-weight: 800; color: var(--accent); font-size: 1.1rem;"><?php echo count($orders); ?></span>
+        <span class="muted text-xs" style="text-transform: uppercase; font-weight: 700; margin-left: 8px;">Shipments</span>
+    </div>
 </div>
 
-<div style="overflow-x: auto; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
-    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-        <thead>
-            <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left; color: #475569;">
-                <th style="padding: 15px;">Order ID</th>
-                <th style="padding: 15px;">Customer Detail</th>
-                <th style="padding: 15px;">Order Date</th>
-                <th style="padding: 15px; text-align: right;">Amount</th>
-                <th style="padding: 15px; text-align: center;">Current Status</th>
-                <th style="padding: 15px; text-align: center;">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($orders as $o): 
-                $sc = $status_colors[$o['status']] ?? ['bg' => '#f1f5f9', 'text' => '#475569'];
-            ?>
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-                <td style="padding: 15px; font-weight: bold;">#<?php echo $o['id']; ?></td>
-                <td style="padding: 15px;">
-                    <div style="font-weight: 500;"><?php echo h($o['username']); ?></div>
-                    <div style="font-size: 0.75rem; color: #94a3b8;"><?php echo h($o['email']); ?></div>
-                </td>
-                <td style="padding: 15px; color: #64748b; font-size: 0.85rem;">
-                    <?php echo date('d M Y, H:i', strtotime($o['created_at'])); ?>
-                </td>
-                <td style="padding: 15px; text-align: right; font-weight: 600;">
-                    £<?php echo number_format($o['total_amount'], 2); ?>
-                </td>
-                <td style="padding: 15px; text-align: center;">
-                    <span style="padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; background: <?php echo $sc['bg']; ?>; color: <?php echo $sc['text']; ?>;">
-                        <?php echo ucfirst($o['status']); ?>
-                    </span>
-                </td>
-                <td style="padding: 15px; text-align: center;">
-                    <form method="POST" action="" style="display: flex; gap: 5px; justify-content: center;">
-                        <?php echo csrf_field(); ?>
-                        <input type="hidden" name="update_status" value="1">
-                        <input type="hidden" name="order_id" value="<?php echo $o['id']; ?>">
-                        <select name="status" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.8rem;">
-                            <?php foreach (['pending','processing','shipped','cancelled'] as $s): ?>
-                                <option value="<?php echo $s; ?>" <?php echo $o['status'] === $s ? 'selected' : ''; ?>>
-                                    <?php echo ucfirst($s); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button type="submit" class="btn" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;">Set</button>
-                    </form>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+<div class="card reveal" style="padding: 0; overflow: hidden; animation-delay: 0.1s;">
+    <div class="table-container" style="border: none;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="padding-left: 2rem;">Order ID</th>
+                    <th>Recipient</th>
+                    <th>Placement Date</th>
+                    <th class="text-right">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-right" style="padding-right: 2rem;">Logistics Control</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($orders as $o): ?>
+                <tr>
+                    <td style="padding-left: 2rem; font-weight: 800; color: var(--primary);">#<?php echo $o['id']; ?></td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--primary);"><?php echo h($o['username']); ?></div>
+                        <div class="muted text-xs"><?php echo h($o['email']); ?></div>
+                    </td>
+                    <td>
+                        <div class="muted text-sm" style="font-weight: 500;"><?php echo date('d M Y', strtotime($o['created_at'])); ?></div>
+                        <div class="muted text-xs"><?php echo date('H:i', strtotime($o['created_at'])); ?></div>
+                    </td>
+                    <td class="text-right" style="font-weight: 700; color: var(--accent);">
+                        £<?php echo number_format($o['total_amount'], 2); ?>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge badge-status <?php echo strtolower($o['status']); ?>" style="padding: 0.4rem 1rem;">
+                            <?php echo ucfirst($o['status']); ?>
+                        </span>
+                    </td>
+                    <td class="text-right" style="padding-right: 2rem;">
+                        <form method="POST" action="" class="row" style="justify-content: flex-end; gap: 0.75rem;">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="update_status" value="1">
+                            <input type="hidden" name="order_id" value="<?php echo $o['id']; ?>">
+                            <select name="status" class="select" style="max-width: 140px; padding: 0.4rem 0.75rem; font-size: 0.85rem;">
+                                <?php foreach (['pending','processing','shipped','cancelled'] as $s): ?>
+                                    <option value="<?php echo $s; ?>" <?php echo $o['status'] === $s ? 'selected' : ''; ?>>
+                                        <?php echo ucfirst($s); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="submit" class="btn btn-outline" style="padding: 0.45rem 1rem; font-size: 0.85rem;">
+                                Set
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

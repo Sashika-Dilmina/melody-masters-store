@@ -36,35 +36,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<div style="display: flex; min-height: 80vh; align-items: center; justify-content: center; padding: 40px 20px;">
-    <div style="width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 20px; padding: 50px 40px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);">
-        <div style="text-align: center; margin-bottom: 40px;">
-            <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--primary-color); letter-spacing: -0.02em; margin-bottom: 10px;">Welcome Back</h2>
-            <p style="color: #64748b; font-size: 0.95rem;">Enter your credentials to continue</p>
+<div class="auth-page-wrapper">
+    <div class="auth-container">
+        <!-- Brand Panel -->
+        <div class="brand-panel">
+            <h1>Melody Masters</h1>
+            <p>Shop the finest instruments & digital sheet music online.</p>
         </div>
-        
-        <form method="POST" action="">
-            <?php echo csrf_field(); ?>
-            <div style="margin-bottom: 24px;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Email</label>
-                <input type="email" name="email" required placeholder="name@example.com"
-                       style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background: #fff; transition: all 0.2s ease;"
-                       value="<?php echo h($_POST['email'] ?? ''); ?>">
-            </div>
+
+        <!-- Form Panel -->
+        <div class="form-panel">
+            <h2>Sign In</h2>
             
-            <div style="margin-bottom: 30px;">
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 8px;">Password</label>
-                <input type="password" name="password" required placeholder="••••••••"
-                       style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; background: #fff; transition: all 0.2s ease;">
+            <form method="POST" action="">
+                <?php echo csrf_field(); ?>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" name="email" id="email" required placeholder="name@example.com" class="auth-input" value="<?php echo h($_POST['email'] ?? ''); ?>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-box">
+                        <input type="password" name="password" id="password" required placeholder="Enter password" class="auth-input">
+                        <button type="button" class="toggle-btn" onclick="togglePass('password')">Show</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="register.php">Create Account</a></p>
+                <a href="#" class="forgot-link">Forgot Password?</a>
             </div>
-            
-            <button type="submit" class="btn" style="width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; background: var(--primary-color); color: #fff; border: none; cursor: pointer; transition: all 0.2s ease;">LogIn</button>
-        </form>
-        
-        <div style="margin-top: 35px; text-align: center; font-size: 0.95rem; color: #64748b;">
-            Not registered yet? <a href="register.php" style="color: var(--secondary-color); font-weight: 700; text-decoration: none;">Create an Account</a>
         </div>
     </div>
 </div>
+
+<script>
+function togglePass(id) {
+    var input = document.getElementById(id);
+    var btn = input.nextElementSibling;
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "Hide";
+    } else {
+        input.type = "password";
+        btn.textContent = "Show";
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

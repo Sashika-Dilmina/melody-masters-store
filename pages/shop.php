@@ -28,103 +28,97 @@ $sql .= " ORDER BY p.id DESC";
 $products = fetch_all($sql, $types, $params);
 ?>
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-    <h2 style="margin:0;">Shop</h2>
-    <!-- Search bar -->
-    <form method="GET" action="" style="display:flex; gap:8px;">
-        <input type="text" name="q" placeholder="Search products…" value="<?php echo h($search); ?>"
-               style="padding:8px 12px; border:1px solid #ccc; border-radius:4px; min-width:220px;">
+<div class="space-between mb-5 reveal">
+    <h1 class="title" style="font-size: 2rem; margin: 0;">Our Collection</h1>
+    
+    <form method="GET" action="" class="row">
+        <div style="position: relative;">
+            <input type="text" name="q" placeholder="Search instruments..." value="<?php echo h($search); ?>" class="input" style="min-width: 280px; padding-left: 2.5rem;">
+            <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted);" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
         <?php if ($category_id): ?>
             <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
         <?php endif; ?>
-        <button type="submit" class="btn" style="padding:8px 14px;">Search</button>
+        <button type="submit" class="btn btn-primary">Search</button>
         <?php if ($search): ?>
-            <a href="shop.php<?php echo $category_id ? '?category_id='.$category_id : ''; ?>" class="btn"
-               style="background:#94a3b8; padding:8px 14px;">Clear</a>
+            <a href="shop.php<?php echo $category_id ? '?category_id='.$category_id : ''; ?>" class="btn btn-outline">Clear</a>
         <?php endif; ?>
     </form>
 </div>
 
-<!-- Shipping notice -->
-<div style="background:#f1f5f9; border: 1px solid #e2e8f0; padding:12px 15px; border-radius:4px; margin-bottom:20px; font-size:0.9rem; color:#475569;">
-    Free shipping on orders over £<?php echo number_format(FREE_SHIPPING_THRESHOLD, 0); ?>. 
-    Standard flat rate £<?php echo number_format(FLAT_SHIPPING_FEE, 2); ?>.
+<div class="alert alert-info mb-5 reveal" style="animation-delay: 0.1s;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    <span>Free shipping on orders over <strong>£<?php echo number_format(FREE_SHIPPING_THRESHOLD, 0); ?></strong>. Standard rate £<?php echo number_format(FLAT_SHIPPING_FEE, 2); ?>.</span>
 </div>
 
-<!-- Category filter -->
-<div style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
-    <strong style="margin-right:4px; font-size: 0.9rem;">Categories:</strong>
-    <a href="shop.php<?php echo $search ? '?q='.urlencode($search) : ''; ?>"
-       class="btn" style="padding:4px 12px; font-size:0.85rem; border-radius: 4px;
-           background:<?php echo $category_id === 0 ? 'var(--primary-color)' : '#e2e8f0'; ?>;
-           color:<?php echo $category_id === 0 ? '#fff' : '#475569'; ?>;">All</a>
-    <?php foreach ($categories as $cat): ?>
-        <a href="shop.php?category_id=<?php echo $cat['id']; ?><?php echo $search ? '&q='.urlencode($search) : ''; ?>"
-           class="btn" style="padding:4px 12px; font-size:0.85rem; border-radius: 4px;
-               background:<?php echo $category_id === $cat['id'] ? 'var(--primary-color)' : '#e2e8f0'; ?>;
-               color:<?php echo $category_id === $cat['id'] ? '#fff' : '#475569'; ?>;">
-            <?php echo h($cat['name']); ?>
-        </a>
-    <?php endforeach; ?>
+<div class="mb-5 reveal" style="animation-delay: 0.2s;">
+    <div class="row" style="flex-wrap: wrap; gap: 0.75rem;">
+        <span class="muted text-sm" style="font-weight: 600; text-transform: uppercase;">Filter by:</span>
+        <a href="shop.php<?php echo $search ? '?q='.urlencode($search) : ''; ?>"
+           class="btn <?php echo $category_id === 0 ? 'btn-primary' : 'btn-outline'; ?>" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 999px;">All Products</a>
+        <?php foreach ($categories as $cat): ?>
+            <a href="shop.php?category_id=<?php echo $cat['id']; ?><?php echo $search ? '&q='.urlencode($search) : ''; ?>"
+               class="btn <?php echo $category_id === $cat['id'] ? 'btn-primary' : 'btn-outline'; ?>" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 999px;">
+                <?php echo h($cat['name']); ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
 </div>
 
 <?php if (empty($products)): ?>
-    <div style="text-align:center; padding:60px 20px; background:#fff; border: 1px solid #e2e8f0; border-radius:8px;">
-        <p style="color:#64748b; font-size:1rem; margin:0;">No products match your criteria. <a href="shop.php">View all products</a>.</p>
+    <div class="card text-center reveal" style="padding: 5rem 2rem;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); margin-bottom: 1.5rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <p class="muted mb-4">No products found matching your current selection.</p>
+        <a href="shop.php" class="btn btn-primary">Clear all filters</a>
     </div>
 <?php else: ?>
-<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px;">
-    <?php foreach ($products as $product): ?>
-    <div style="background:#fff; border: 1px solid #e2e8f0; border-radius:8px; overflow:hidden; display:flex; flex-direction:column;">
-
-        <!-- Product image -->
-        <a href="<?php echo $base_url; ?>/pages/product.php?id=<?php echo $product['id']; ?>" style="display: block; background: #f8fafc; height: 200px;">
+<div class="grid grid-4 mb-5">
+    <?php foreach ($products as $index => $product): ?>
+    <div class="card card-hover reveal" style="padding: 0; overflow: hidden; animation-delay: <?php echo 0.05 * $index; ?>s;">
+        <a href="<?php echo $base_url; ?>/pages/product.php?id=<?php echo $product['id']; ?>" style="display: block; background: #f8fafc; height: 220px; position: relative;">
             <?php if ($product['image_path']): ?>
                 <img src="<?php echo $base_url . '/uploads/products/' . h($product['image_path']); ?>"
                         alt="<?php echo h($product['name']); ?>"
-                        style="width:100%; height:100%; object-fit:cover; display:block;">
+                        style="width: 100%; height: 100%; object-fit: cover;">
             <?php else: ?>
-                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#cbd5e1; font-weight: 500;">No Image</div>
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #cbd5e1; font-weight: 500;">No Image</div>
             <?php endif; ?>
+            
+            <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge <?php echo strtoupper($product['product_type']) === 'DIGITAL' ? 'badge-digital' : 'badge-physical'; ?>">
+                    <?php echo h($product['product_type']); ?>
+                </span>
+            </div>
         </a>
 
-        <div style="padding:15px; flex:1; display:flex; flex-direction:column;">
-            <span style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase; letter-spacing:.05em;">
-                <?php echo h($product['category_name'] ?? 'Music'); ?>
-                <?php if ($product['product_type'] === 'digital'): ?>
-                    &bull; Digital
-                <?php endif; ?>
-            </span>
-            <h3 style="margin:6px 0 8px; font-size:1rem; line-height:1.3;">
-                <a href="<?php echo $base_url; ?>/pages/product.php?id=<?php echo $product['id']; ?>"
-                   style="color:inherit; text-decoration:none;">
+        <div style="padding: 1.25rem; display: flex; flex-direction: column; flex: 1;">
+            <p class="text-xs muted mb-1" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 600;"><?php echo h($product['category_name'] ?? 'General'); ?></p>
+            <h3 style="margin-bottom: 0.75rem; font-size: 1.05rem; line-height: 1.4; height: 2.8em; overflow: hidden;">
+                <a href="<?php echo $base_url; ?>/pages/product.php?id=<?php echo $product['id']; ?>" style="color: inherit;">
                     <?php echo h($product['name']); ?>
                 </a>
             </h3>
             
-            <p style="color:var(--primary-color); font-weight:bold; font-size:1.1rem; margin-bottom:12px;">
+            <p style="font-weight: 800; font-size: 1.25rem; color: var(--primary); margin-bottom: 1.25rem;">
                 £<?php echo number_format($product['price'], 2); ?>
             </p>
 
             <?php if (get_current_user_role() !== 'admin'): ?>
-            <div style="display:flex; gap:8px; margin-top:auto;">
-                <a href="<?php echo $base_url; ?>/pages/product.php?id=<?php echo $product['id']; ?>"
-                   class="btn" style="flex:1; text-align:center; padding:8px; font-size:0.85rem; background: #fff; color: var(--primary-color); border: 1px solid #e2e8f0; border-radius: 4px;">Detail</a>
-
-                <?php if ($product['product_type'] === 'digital' || $product['stock_qty'] > 0): ?>
-                    <form method="POST" action="<?php echo $base_url; ?>/api/cart-add.php" style="flex:1;">
+            <div class="row" style="margin-top: auto; gap: 0.5rem;">
+                <?php if ((strtoupper($product['product_type']) === 'PHYSICAL' && $product['stock_qty'] > 0) || strtoupper($product['product_type']) === 'DIGITAL'): ?>
+                    <form method="POST" action="<?php echo $base_url; ?>/api/cart-add.php" style="flex: 1;">
                         <?php echo csrf_field(); ?>
                         <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
                         <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn"
-                                style="width:100%; padding:8px; font-size:0.85rem; border-radius: 4px;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.6rem; font-size: 0.85rem;">
                             Add to Cart
                         </button>
                     </form>
                 <?php else: ?>
-                    <span style="flex:1; text-align:center; padding:8px; background:#f1f5f9;
-                          color:#94a3b8; border-radius: 4px; font-size:0.85rem;">Sold Out</span>
+                    <button class="btn btn-outline" disabled style="flex: 1; opacity: 0.6; cursor: not-allowed; font-size: 0.85rem;">Sold Out</button>
                 <?php endif; ?>
+                <a href="<?php echo $base_url; ?>/pages/product.php?id=<?php echo $product['id']; ?>"
+                   class="btn btn-outline" style="padding: 0.6rem; font-size: 0.85rem;">Details</a>
             </div>
             <?php endif; ?>
         </div>

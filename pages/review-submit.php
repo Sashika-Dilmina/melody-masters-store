@@ -33,37 +33,39 @@ if ($existing_review) {
 }
 ?>
 
-<div style="max-width: 600px; margin: 0 auto; padding-top: 20px;">
-    <div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="margin: 0;">Submit Review</h2>
-        <a href="product.php?id=<?php echo $product_id; ?>" style="font-size: 0.9rem; color: #64748b;">Return to Product</a>
-    </div>
+<div class="mb-5 reveal text-center">
+    <h1 class="title" style="font-size: 2rem;">Product Experience Review</h1>
+    <p class="muted">Share your musical journey with <strong><?php echo h($product['name']); ?></strong>.</p>
+</div>
 
-    <div style="background: #fff; padding: 30px; border: 1px solid #e2e8f0; border-radius: 8px;">
-        <p style="margin-bottom: 25px; color: #475569;">You are reviewing: <strong><?php echo h($product['name']); ?></strong></p>
-        
+<div class="reveal" style="max-width: 600px; margin: 0 auto; animation-delay: 0.1s;">
+    <div class="card" style="padding: 3rem;">
         <form method="POST" action="<?php echo $base_url; ?>/api/review-save.php">
             <?php echo csrf_field(); ?>
             <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
             
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Rating Quality</label>
-                <select name="rating" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
-                    <option value="5">5 - Excellent</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="3">3 - Average</option>
-                    <option value="2">2 - Poor</option>
-                    <option value="1">1 - Unsatisfactory</option>
+            <div class="mb-5">
+                <label class="mb-3" style="display: block; font-weight: 700; color: var(--primary);">1. How would you rate this item?</label>
+                <select name="rating" required class="select" style="font-size: 1rem; padding: 1rem;">
+                    <option value="5">★★★★★ - Masterpiece (5/5)</option>
+                    <option value="4">★★★★☆ - Very Good (4/5)</option>
+                    <option value="3">★★★☆☆ - Average (3/5)</option>
+                    <option value="2">★★☆☆☆ - Poor (2/5)</option>
+                    <option value="1">★☆☆☆☆ - Unsatisfactory (1/5)</option>
                 </select>
             </div>
             
-            <div style="margin-bottom: 25px;">
-                <label style="display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Written Feedback</label>
-                <textarea name="comment" required placeholder="Describe your experience with this item..."
-                          style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; height: 120px; font-size: 0.9rem; font-family: inherit;"></textarea>
+            <div class="mb-5">
+                <label class="mb-3" style="display: block; font-weight: 700; color: var(--primary);">2. Detailed Feedback</label>
+                <textarea name="comment" required placeholder="What did you like? How was the sound quality or manufacturing?"
+                          class="textarea" style="height: 180px; padding: 1rem;"></textarea>
+                <p class="text-xs muted mt-2">Your review will be public and attribute to your display name.</p>
             </div>
             
-            <button type="submit" class="btn" style="width: 100%; padding: 12px; border-radius: 6px; font-weight: bold;">Post Review</button>
+            <div class="stack">
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.25rem; font-weight: 800; letter-spacing: 0.5px;">PUBLISH REVIEW</button>
+                <a href="product.php?id=<?php echo $product_id; ?>" class="btn btn-outline" style="width: 100%; padding: 1rem; margin-top: 1rem;">Back to Product</a>
+            </div>
         </form>
     </div>
 </div>

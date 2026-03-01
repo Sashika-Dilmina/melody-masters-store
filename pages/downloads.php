@@ -25,39 +25,45 @@ $sql = "
 $downloads = fetch_all($sql, "i", [$user_id]);
 ?>
 
-<div style="margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
-    <h2 style="margin: 0;">Digital Downloads</h2>
+<div class="mb-5 reveal">
+    <h1 class="title" style="font-size: 2rem;">Digital Library</h1>
+    <p class="muted">Access and download your purchased digital sheet music.</p>
 </div>
 
 <?php if (empty($downloads)): ?>
-    <div style="text-align:center; padding:60px 20px; background:#fff; border: 1px solid #e2e8f0; border-radius:8px;">
-        <p style="color:#64748b; font-size:1rem; margin-bottom: 20px;">
-            You haven't purchased any digital items yet.
-        </p>
-        <a href="shop.php?category_id=digital" class="btn">Explore Sheet Music</a>
+    <div class="card text-center reveal" style="padding: 5rem 2rem;">
+        <div style="width: 80px; height: 80px; background: var(--bg-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--text-muted); border: 1px solid var(--border);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </div>
+        <h2 class="mb-2">Your library is empty</h2>
+        <p class="muted mb-5">You haven't purchased any digital masterpieces yet.</p>
+        <a href="shop.php" class="btn btn-primary" style="padding: 1rem 2.5rem;">Browse Digital Collection</a>
     </div>
 <?php else: ?>
-    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:25px;">
-        <?php foreach ($downloads as $item): ?>
-        <div style="background:#fff; padding:20px; border: 1px solid #e2e8f0; border-radius:8px; display:flex; flex-direction:column; gap:12px;">
-            <div style="height: 120px; background: #f8fafc; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    <div class="grid grid-4 reveal">
+        <?php foreach ($downloads as $index => $item): ?>
+        <div class="card card-hover reveal" style="padding: 0; overflow: hidden; animation-delay: <?php echo 0.05 * $index; ?>s;">
+            <div style="height: 180px; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
                 <?php if ($item['image_path']): ?>
                     <img src="<?php echo $base_url . '/uploads/products/' . h($item['image_path']); ?>"
-                         style="width:100%; height:100%; object-fit:cover;">
+                         style="width: 100%; height: 100%; object-fit: cover;">
                 <?php else: ?>
-                    <span style="color: #cbd5e1; font-size: 0.8rem;">Digital Item</span>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color: #cbd5e1;"><path d="m16 6 4 14H4L8 6Z"></path><path d="M12 6v14"></path><path d="M8 10h8"></path><path d="M8 14h8"></path></svg>
                 <?php endif; ?>
             </div>
             
-            <h3 style="margin:0; font-size:1rem;"><?php echo h($item['name']); ?></h3>
-            <p style="font-size:0.75rem; color:#94a3b8; margin:0;">
-                Purchased on <?php echo date('d M Y', strtotime($item['purchased_at'])); ?>
-            </p>
-            
-            <a href="<?php echo $base_url; ?>/api/download-file.php?product_id=<?php echo $item['product_id']; ?>"
-               class="btn" style="text-align:center; margin-top:10px; padding: 10px; border-radius: 4px; font-size: 0.85rem;">
-                Download Asset
-            </a>
+            <div style="padding: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.05rem; line-height: 1.4; height: 2.8em; overflow: hidden;"><?php echo h($item['name']); ?></h3>
+                <p class="muted text-xs mb-4" style="font-weight: 600; text-transform: uppercase;">
+                    Acquired: <?php echo date('d M Y', strtotime($item['purchased_at'])); ?>
+                </p>
+                
+                <a href="<?php echo $base_url; ?>/api/download-file.php?product_id=<?php echo $item['product_id']; ?>"
+                   class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.85rem;">
+                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download PDF Asset
+                </a>
+            </div>
         </div>
         <?php endforeach; ?>
     </div>
